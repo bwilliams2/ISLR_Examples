@@ -1,0 +1,143 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+## Load Data
+
+```{r}
+library(MASS)
+library(tidyr)
+library(ggplot2)
+library(magrittr)
+library(QTLRel)
+```
+
+## Part b
+
+### House Age
+
+House age does not seem to have a strong effect on median value. There is a baseline value around $25,000 that is consistent across house age.
+
+```{r}
+plot(Boston$age,Boston$medv)
+```
+
+### Number of Rooms
+The number of rooms had a strong effect on median house value. Median value seems to have a linear dependence on number of rooms.
+
+```{r}
+plot(Boston$rm,Boston$medv)
+```
+### Effect of crime
+
+Crime does seem to effect crime but there is a lack of resolution in the crime rate data.
+
+```{r}
+plot(Boston$crim,Boston$medv,log='x')
+```
+ 
+```{r}
+plot(Boston$dis,Boston$medv)
+```
+### Lower Status of Population
+
+Lower status has a strong effect on the 
+
+```{r}
+plot(Boston$lstat,Boston$medv)
+```
+ 
+```{r}
+y_value = 'medv'
+Boston %>%
+  gather(-y_value, key = "var", value = "value") %>%
+  ggplot(aes_string(x = "value", y = y_value)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free")+
+    theme_bw()
+```
+ 
+## Part c
+
+Distance, median value, bound by Charles River, and nox seem to have predictive relatinships with crime.
+
+```{r}
+summary(Boston$crim)
+```
+
+```{r}
+y_value = 'crim'
+Boston %>%
+  gather(-y_value, key = "var", value = "value") %>%
+  ggplot(aes_string(x = "value", y = y_value)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free")+
+    theme_bw()
+```
+
+
+```{r}
+plot(Boston$dis,Boston$crim,log='x')
+```
+
+## Part d
+
+### Crime rate
+```{r}
+summary(Boston$crim)
+```
+
+The max crime rate is 89 which is an incredible 35,600% of the median value of .26.
+
+```{r}
+summary(Boston$tax)
+```
+
+The max tax rate is 711 which is 215% of the median value of 330.
+
+```{r}
+summary(Boston$ptratio)
+```
+
+The minimum, maximum, and media of pupil to teacher ratio is 12.60, 22.00, and 19.05.
+
+## Part e
+
+The number of 1 entries in chas column gives the number of towns bordering the river.
+
+```{r}
+length(Boston[Boston$chas==1,])
+```
+
+## Part f
+
+```{r}
+median(Boston$ptratio)
+```
+
+## Part g
+
+
+```{r}
+minTowns = c(which(Boston$medv==min(Boston$medv)))
+Boston[minTowns,'medv',drop=FALSE]
+```
+
+```{r}
+compareChart = data.frame(matrix(ncol=5,nrow=length(colnames(Boston))))
+rownames(compareChart) <- colnames(Boston)
+for (name in rownames(compareChart)){
+  compareChart[name,]=c(Boston[minTowns,name],min(Boston[,name]),median(Boston[,name]),max(Boston[,name]))
+}
+colnames(compareChart) <- c(minTowns,'Min','Median','Max')
+compareChart
+```
+
+## Part h
+
+
+```{r}
+sum(Boston$rm>7,na.rm=TRUE)
+sum(Boston$rm>8,na.rm=TRUE)
+```
+

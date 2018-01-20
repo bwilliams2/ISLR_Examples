@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Load Data
+```{r}
+#load auto data
+auto <- read.csv('Auto.data',sep='')
+
+
+qualt = c('origin','name','year')
+
+quant = setdiff(colnames(auto),qualt)
+
+auto$horsepower <- suppressWarnings(as.numeric(as.character(auto$horsepower)))
+
+
+
+
+```
+
+## Parts b,c
+```{r}
+#Part b,c
+quantProps <- data.frame(matrix(ncol=length(quant),nrow=4))
+colnames(quantProps) <- quant
+for (column in colnames(quantProps)){
+  quantProps[1:2,column] = range(auto[,column],na.rm=TRUE)
+  quantProps[3,column] = mean(auto[,column],na.rm=TRUE)
+  quantProps[4,column] = sd(auto[,column],na.rm=TRUE)
+}
+rownames(quantProps) <- c('Low','High','Mean','Std.Dev')
+```
+
+## Parts d,e
+```{r}
+
+#Part d,e
+autoLimited = auto[-seq(10,85),]
+quantPropsD <- data.frame(matrix(ncol=length(quant),nrow=4))
+colnames(quantPropsD) <- quant
+for (column in colnames(quantPropsD)){
+  quantPropsD[,column] = c(range(auto[,column],na.rm=TRUE),mean(auto[,column],na.rm=TRUE),sd(auto[,column],na.rm=TRUE))
+}
+rownames(quantPropsD) <- c('Low','High','Mean','Std.Dev')
+```
+## Part f
+```{r}
+boxplot(mpg~year,data=auto)
+```
+
+```{r}
+plot(auto$mpg~auto$cylinders)
+```
+```{r}
+plot(auto$horsepower,auto$mpg)
+```
+```{r}
+plot(auto$weight,auto$mpg)
+```
+
+```{r}
+plot(auto$displacement,auto$mpg)
+```
+
+```{r}
+boxplot(auto$mpg~auto$origin)
+```
+
+```{r}
+boxplot(auto$horsepower~auto$cylinders)
+```
+
