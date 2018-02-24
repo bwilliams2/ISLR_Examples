@@ -1,0 +1,230 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Prob 1
+#![Table 3.4 from ISLR](/home/bryce/OneDrive/Courses/Statistics Textbook/ISLR_Examples/Chap_3/table3-4.png)
+
+Null-hypotheses: TV, radio, and newspaper advertising spending has no effect on the number of units sold.
+
+Conclusions: TV and radio have a significant effect on unit sales with p-values < 0.01. Newspaper advertising has an insignificant effect on unit sales.
+
+## Prob 2
+KNN classifier is used in qualitative cases. It is a simple statistical model looking at the identity of nearby points to classify the point of interest.
+
+KNN regression uses nearby points to create a linear or other form regression for the local area based on the surronding points. This is done at every point in the data set.
+
+## Prob 3
+Equation
+
+$$\textrm{Salary} = 50 + 20 X_1 + 0.07 X_2 + 35 X_3 + 0.01 X_4 - 10 X_5$$
+a. iii is correct. If $|\hat{\beta}_5 * X_1| > \hat{\beta}_3$ then males will earn more than females since all other coefficients and predictors are positive.
+
+b. $137.1 * 10^{3}$
+
+c. False, there can still be an interaction effect even with a small coefficient. Since the product of GPA and IQ is likely in the $10^2$ range, this effect can be significant even with a small coefficient. Looking at the p-value would be more beneficial the the value of the coefficient.
+
+## Prob 4
+a. If it is truly linear relationship, it would be expected that the linear and cubic regression would be the same as the optimal value would be setting $\beta_2 = \beta+3 = 0$ to get a perfect fit.
+
+b. As the relationship is truly linear, the same relationship should hold.
+
+c. It would be expected that the RSS for the cubic regression would be lower than the linear case. The sum least squares is at most equal to the linear case is likely less due to the presence of more fitting variables.
+
+d. There is not enough information to answer. The cubic could be significantly worse than linear depending on the actual form of the relationship.
+
+## Prob 5
+Let
+$$a_{i} = \frac{x_i}{\sum_{i'=1}^{n} x_{i'}^2}$$
+such that
+$$\hat{y}_i = \sum_{i'=1}^{n} a_{i'}y_{i'}$$
+
+## Prob 6
+
+Equation 3.4 states
+
+$$\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$$
+
+The least squares line is
+
+$$y = \hat{\beta}_0 + \hat{\beta}_1 x$$
+
+Using Eq 3.4 to substitute for $\hat{\beta}_0$
+
+$$y - \bar{y} = \hat{\beta}_1 (x-\bar{x})$$
+
+At $(x,y) = (\bar{x},\bar{y})$, this reduces to 
+
+$$ 0 = 0$$ 
+
+showing that $(\bar{x},\bar{y})$ lies on the least squares line.
+## Prob 7
+
+$$\sum y_i^2 - 2 y_i \bar{y} + \bar{y}^2 - y_i^2 +2 y_i \hat{y}_i - \hat{y}_i^2$$
+
+$$\sum 2 y_i (\hat{y}_i-\bar{y}) + \bar{y}^2 + \hat{y}_i^2$$
+## Prob 8
+
+a.
+```{r}
+library("ISLR")
+auto.fit = lm(mpg~horsepower,data=Auto)
+summary(auto.fit)
+```
+  i. Yes the p-value is much less than 0.001 indicating the fit is significant.
+  
+  ii. Each unit increase in horsepower reduces mpg by 0.158.
+  
+  iii. negative
+  
+  iv. 
+```{r}
+predict (auto.fit, data.frame(horsepower = c(98)) ,interval ="confidence")
+
+```
+  
+```{r}
+predict (auto.fit, data.frame(horsepower = c(98)) ,interval ="prediction")
+```
+
+b. 
+```{r}
+plot(Auto$horsepower,Auto$mpg)
+abline(auto.fit)
+```
+
+d.
+
+```{r}
+plot(predict(auto.fit),residuals(auto.fit))
+```
+
+```{r}
+plot(predict(auto.fit),rstudent(auto.fit))
+```
+
+```{r}
+plot(hatvalues(auto.fit))
+```
+
+## Prob 9
+
+a.
+```{r}
+pairs(Auto)
+```
+b.
+```{r}
+cor(Auto[,!(colnames(Auto) == "name")])
+```
+c.
+```{r}
+lmautofit = lm(mpg~.-name,data=Auto)
+summary(lmautofit)
+```
+i. Yes the p-value is < 2.2e-16 indicating a significant correlation between predictor and response.
+
+ii. weight, year, origin, and displacement are significant factors for mpg
+
+iii. With increasing model year, the mpg increases by approximately 0.75 mpg for each year.
+
+d.
+```{r}
+plot(predict(lmautofit),residuals(lmautofit))
+```
+
+```{r}
+plot(predict(lmautofit),rstudent(lmautofit))
+```
+```{r}
+plot(hatvalues(lmautofit))
+```
+There is an increase in spread at higher mpg values as well as a non-linear trend in a u-shape curve through the residuals.
+
+e.
+```{r}
+lmautofit = lm(mpg~.-name+horsepower*weight+cylinders:weight,data=Auto)
+summary(lmautofit)
+```
+## Prob 10
+
+```{r}
+lmfitcar = lm(Sales~Price+Urban+US,data=Carseats)
+summary(lmfitcar)
+```
+
+b. Price and US are significant for the model while Urban is insignificant for predicting sales. Price has an indirect relationship with Sales. Sales go up by 1.2 thousand if the store is in the United States in the United States.
+
+c.
+$$ S = \beta_0 + \beta_1 P + \beta_2 x_{urb} + \beta_3 x_{us}$$
+with 
+$$x_{urb} = \cases{
+1 & \text{if Urban is Yes}\cr
+0 & \text{otherwise}
+}$$
+
+and 
+$$x_{us} = \cases{
+1 & \text{if US is Yes}\cr
+0 & \text{otherwise}
+}$$
+
+d. For all but $\beta_2$.
+
+e.
+```{r}
+lmfitcar = lm(Sales~Price+US,data=Carseats)
+summary(lmfitcar)
+```
+
+f. The models are pretty close to each other (e) is a bit better adjusted R-squared
+
+g. 
+```{r}
+confint(lmfitcar,level=0.95)
+```
+h.
+```{r}
+plot(hatvalues(lmfitcar))
+which.max(hatvalues(lmfitcar))
+```
+yes the plot of hatvalues show some outliers.
+
+## Prob 11
+```{r}
+set.seed(1)
+x=rnorm(100)
+y=2*x+rnorm(100)
+```
+
+a.
+```{r}
+lmfit11 = lm(y~x+0)
+summary(lmfit11)
+```
+Coefficient $\hat{\beta}$ associated with $x$ is fit to be 1.9939 with a t-value of 18.73 and p-value of <2e-16. This is sufficient to reject the null hypothesis.
+
+b.
+```{r}
+lmfit11b = lm(x~y+0)
+summary(lmfit11b)
+```
+```{r}
+
+```
+
+
+## Prob 12
+a. When the 
+$$\sum_{i' = 1}^n x_{i'}^2 = \sum_{i' = 1}^n y_{i'}^2$$
+c.
+```{r}
+x = rnorm(99)
+y = rnorm(99)
+x=c(x,0)
+y=c(y,(sum(x^2) - sum(y^2))^.5)
+sum(x^2) - sum(y^2)
+```
+
+
